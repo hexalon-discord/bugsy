@@ -856,7 +856,7 @@ async function debug(message2, parent2) {
         .setAuthor({ name: guild.name, iconURL: guild.iconURL({ format: 'png', size: 2048 }) })
         .setTitle("Completed the test")
         .setDescription(`<:roundtrip:1232758732484644924> **Round Trip Time** - \`${rtt}ms\`\n<:api:1232758731054387262> **API Latency** - \`${parent2.client.ws.ping}ms\``)
-        .setColor("#b62121")
+        .setColor("#2B2D31")
         await message2.reply({embeds: [replyEmbed]});
         const emoji = "✅";
         await message2.react(`${emoji}`); 
@@ -880,7 +880,6 @@ var import_discord6 = require("discord.js");
 async function js(message, parent) {
 
   if (!message.author.id === "872110981835268096") {
-    message.reply("Only <@872110981835268096> can run this command")
     return;
   }
 
@@ -964,10 +963,42 @@ async function js(message, parent) {
 __name(js, "js");
 
 async function err(message, parent) {
-  message.reply("Not made yet")
+  if (!message.data.args) {
+    message.reply("Missing Arguments.");
+    return;
+  }
+  const errorId = message.data.args.split(" ")[0]
+  let time, typ, ero, chan, user, gui, comm;
+  fs.readFile(`src/data/logs/err_${errorId}.json`, 'utf8', async (err, data) => {
+    if (err) {
+      console.error('Error reading JSON file:', err);
+      return;
+    }
+  
+    const jsonData = JSON.parse(data);
 
+    console.log(jsonData)
+    console.log(jsonData.errorData.time)
+    time = jsonData.errorData.time
+    typ = jsonData.errorData.type
+    ero = jsonData.errorData.error
+    chan = jsonData.commandData.channelId
+    user = jsonData.commandData.userId
+    gui = jsonData.commandData.guildId
+    comm = jsonData.commandData.command
+
+    const replyEmbed = new import_discord11.EmbedBuilder ()
+    .setTitle(`${typ}`)
+    .setDescription(`**Error Id** \`${errorId}\``)
+    .addFields(
+      {name: `Error Information`,value:`<:js:1233119904216121344>**Error Details** ${ero}\n<:reminder:1233121024447348738>**Time** <t:${Math.floor(time / 1000)}:R>`},
+      {name: `User Information`, value: `<:js:1233119904216121344>**Command** \`${comm}\`\n<:user:1233119098754564171>**User** <@${user}>\n<:reason:1233119260725743707>**Channel** https://discord.com/channels/${gui}/${chan}`}
+    )
+    .setColor("#2B2D31")
+    message.reply({ embeds: [replyEmbed] })
+  });
 }
-__name(err, "err");
+__name(err, "error");
 
 // src/index.ts
 var Bugsy = class {
@@ -1076,6 +1107,7 @@ var Bugsy = class {
           debug(ctx, this);
           break;
         case "error":
+        case "err":
           err(ctx, this);
           break;
         default:
