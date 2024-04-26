@@ -855,7 +855,7 @@ async function debug(message2, parent2) {
         const replyEmbed = new import_discord11.EmbedBuilder ()
         .setAuthor({ name: guild.name, iconURL: guild.iconURL({ format: 'png', size: 2048 }) })
         .setTitle("Completed the test")
-        .setDescription(`<:roundtrip:1232758732484644924> **Round Trip Time** - \`${rtt}ms\`\n<:api:1232758731054387262> **API Latency** - \`${parent2.client.ws.ping}ms\``)
+        .setDescription(`<:roundtrip:1233486984941670632> **Round Trip Time** - \`${rtt}ms\`\n<:api:1233487055737065522> **API Latency** - \`${parent2.client.ws.ping}ms\``)
         .setColor("#2B2D31")
         await message2.reply({embeds: [replyEmbed]});
         const emoji = "✅";
@@ -977,8 +977,6 @@ async function err(message, parent) {
   
     const jsonData = JSON.parse(data);
 
-    console.log(jsonData)
-    console.log(jsonData.errorData.time)
     time = jsonData.errorData.time
     typ = jsonData.errorData.type
     ero = jsonData.errorData.error
