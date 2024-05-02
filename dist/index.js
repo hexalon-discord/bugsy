@@ -844,10 +844,11 @@ async function debug(message2, parent2) {
         message2.reply('Command cannot be debugged')
         return
       }
+      args.splice(0,1);
       const startTime = Date.now();
       try {
         await message2.channel.send("Running the command...")
-        await command.callback(message2, args[1], parent2.client, '!', true);
+        await command.callback(message2, args, parent2.client, '!', true);
         const endTime = Date.now();
         const rtt = endTime - startTime;
         
