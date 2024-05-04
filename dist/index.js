@@ -809,7 +809,7 @@ Using \`${System.memory().rss}\` at this process.
     " and "
   ) + ".";
   summary += `
-Average websocket latency: \`${parent2.client.ws.ping}ms\`\n Just a little change that was needed to test the new code`;
+Average websocket latency: \`${parent2.client.ws.ping}ms\``;
   message2.reply(summary);
 }
 __name(main, "main");
