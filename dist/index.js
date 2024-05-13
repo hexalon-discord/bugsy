@@ -995,7 +995,7 @@ async function err(message, parent) {
     if (ero.length > 1024) {
       let stackLines = ero.split('\n');
       ero = stackLines.slice(1).map(line => line.trim());
-      for (errpath in ero) {
+      for (let errpath in ero) {
       }
     }
     replyEmbed.addFields({name: `User Information`, value: `<:js:1233487053921190100>**Command** \`${comm}\`\n<:user:1233486996924793024>**User** <@${user}>\n<:reason:1233487051144302792>**Channel** https://discord.com/channels/${gui}/${chan}`})
