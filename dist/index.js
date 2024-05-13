@@ -989,7 +989,7 @@ async function err(message, parent) {
 
     const replyEmbed = new import_discord11.EmbedBuilder ()
     .setTitle(`${typ}`)
-    .setDescription(`**Error Id** \`${errorId}\` ${ero}`)
+    .setDescription(`**Error Id** \`${errorId}\` \n**Error Information**\n>>> ${ero}`)
     .addFields({name: `Error Information`,value:`<:js:1233487053921190100>**Error Details**\n<:timer:1233486986166403153>**Time** <t:${Math.floor(time / 1000)}:R>`},)
     .setColor("#2B2D31")
     if (ero.length > 1024) {
