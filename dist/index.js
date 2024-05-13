@@ -993,8 +993,8 @@ async function err(message, parent) {
     .addFields({name: `Error Information`,value:`<:js:1233487053921190100>**Error Details**\n<:timer:1233486986166403153>**Time** <t:${Math.floor(time / 1000)}:R>`},)
     .setColor("#2B2D31")
     if (ero.length > 1024) {
-      stackLines = ero.split('\n');
-      ero = ero.slice(1).map(line => line.trim());
+      let stackLines = ero.split('\n');
+      ero = stackLines.slice(1).map(line => line.trim());
       for (errpath in ero) {
       }
     }
