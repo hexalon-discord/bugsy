@@ -964,6 +964,7 @@ async function js(message, parent) {
 __name(js, "js");
 
 async function err(message, parent) {
+  try {
   if (!message.data.args) {
     message.reply("Missing Arguments.");
     return;
@@ -996,6 +997,9 @@ async function err(message, parent) {
     .setColor("#2B2D31")
     message.reply({ embeds: [replyEmbed] })
   });
+} catch (err) {
+  client.logger.error(err)
+}
 }
 __name(err, "error");
 
