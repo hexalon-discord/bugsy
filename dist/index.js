@@ -989,7 +989,7 @@ async function err(message, parent) {
 
     const replyEmbed = new import_discord11.EmbedBuilder ()
     .setTitle(`${typ}`)
-    .setDescription(`**Error Id** \`${errorId}\` \n**Error Details**\n>>> ${ero}`)
+    .setDescription(`**Error Id** \`${errorId}\` \n<:js:1233487053921190100>**Error Details**\n>>> ${ero}`)
     .addFields({name: `Error Information`,value:`<:timer:1233486986166403153>**Time** <t:${Math.floor(time / 1000)}:R>\n<:js:1233487053921190100>**Command** \`${comm}\`\n<:user:1233486996924793024>**User** <@${user}>\n<:reason:1233487051144302792>**Channel** https://discord.com/channels/${gui}/${chan}`},)
     .setColor("#2B2D31")
     message.reply({ embeds: [replyEmbed] })
