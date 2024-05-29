@@ -987,6 +987,7 @@ async function err(message, parent) {
     gui = jsonData.commandData.guildId
     comm = jsonData.commandData.command
 
+    
     const replyEmbed = new import_discord11.EmbedBuilder ()
     .setTitle(`${typ}`)
     .setDescription(`**Error Id** \`${errorId}\` \n<:js:1233487053921190100>**Error Details**\n>>> ${ero}`)
