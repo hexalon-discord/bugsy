@@ -978,7 +978,6 @@ async function err(message, parent) {
     }
   
     const jsonData = JSON.parse(data);
-
     time = jsonData.errorData.time
     typ = jsonData.errorData.type
     ero = jsonData.errorData.error
