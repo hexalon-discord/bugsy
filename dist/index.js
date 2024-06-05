@@ -857,7 +857,7 @@ async function debug(message2, parent2) {
         const replyEmbed = new import_discord11.EmbedBuilder()
           .setAuthor({ name: guild.name, iconURL: guild.iconURL({ format: 'png', size: 2048 }) })
           .setTitle("Completed the test")
-          .setDescription(`${bConfig.emojis.rtt}**Round Trip Time** - \`${rtt}ms\`\n${bConfig.emojis.api}**API Latency** - \`${parent2.client.ws.ping}ms\``)
+          .setDescription(`${parent2.config.emojis.rtt}**Round Trip Time** - \`${rtt}ms\`\n${parent2.config.emojis.api}**API Latency** - \`${parent2.client.ws.ping}ms\``)
           .setColor(bConfig.color)
         await message2.reply({ embeds: [replyEmbed] });
         const emoji = "✅";
@@ -971,7 +971,7 @@ async function err(message, parent) {
     }
     const errorId = message.data.args.split(" ")[0]
     let time, typ, ero, chan, user, gui, comm;
-    fs.readFile(`${bConfig.paths.errorfolder}/err_${errorId}.json`, 'utf8', async (err, data) => {
+    fs.readFile(`${parent.config.paths.errorfolder}/err_${errorId}.json`, 'utf8', async (err, data) => {
       if (err) {
         console.error('Error reading JSON file:', err);
         return;
@@ -988,9 +988,9 @@ async function err(message, parent) {
 
       const replyEmbed = new import_discord11.EmbedBuilder()
         .setTitle(`${typ}`)
-        .setDescription(`**Error Id** \`${errorId}\` \n${bConfig.emojis.js}**Error Details**\n>>> ${ero}`)
-        .addFields({ name: `Error Information`, value: `${bConfig.emojis.time}**Time** <t:${Math.floor(time / 1000)}:R>\n${bConfig.emojis.command}**Command** \`${comm}\`\n${bConfig.emojis.user}**User** <@${user}>\n${bConfig.emojis.channel}**Channel** https://discord.com/channels/${gui}/${chan}` },)
-        .setColor(bConfig.color)
+        .setDescription(`**Error Id** \`${errorId}\` \n${parent.config.emojis.js}**Error Details**\n>>> ${ero}`)
+        .addFields({ name: `Error Information`, value: `${parent.config.emojis.time}**Time** <t:${Math.floor(time / 1000)}:R>\n${parent.config.emojis.command}**Command** \`${comm}\`\n${parent.config.emojis.user}**User** <@${user}>\n${parent.config.emojis.channel}**Channel** https://discord.com/channels/${gui}/${chan}` },)
+        .setColor(parent.config.color)
       message.reply({ embeds: [replyEmbed] })
     });
   } catch (err) {
@@ -999,9 +999,8 @@ async function err(message, parent) {
 }
 __name(err, "error");
 
-let checked, db;
+let checked, db, bcf;
 var Bugsy = class {
-
   /**
    * Main Client of Bugsy
    * @param client Discord Client
@@ -1029,28 +1028,30 @@ var Bugsy = class {
     if (!checked && !db) {
       db = true
       const baseDir = path.resolve(__dirname, '../../../');
-      const files = fs.readdirSync(directory);
-
+      function scanDirectory(direc) {
+      const files = fs.readdirSync(direc);
       for (const file of files) {
-        const fullPath = path.join(directory, file);
-
-        // Skip node_modules directory
+        const fullPath = path.join(direc, file);
         if (file === 'node_modules') {
           continue;
         }
-
-        // Check if it's a directory
         if (fs.statSync(fullPath).isDirectory()) {
-          // Recursively scan the subdirectory
-          scanDirectory(fullPath);
-        } else if (file === 'bugsy-config.json') {
-          // If the target file is found, exit the process
-          console.log(`${fullPath}`);
+          const busgyconfig = scanDirectory(fullPath);
+          if (busgyconfig) {
+            return busgyconfig;
+          }
+        } else if (file.toString() === 'bugsy-config.json') {
           return fullPath;
         }
       }
+    }
+      bcf = require(`${scanDirectory(baseDir)}`)
+      if (!bcf.color) {
+        bcf.color = "#2B2D31"
+      } 
       checked = true
     }
+    this.config = bcf
     if (options.isOwner && !options.owners)
       options.owners = [];
     this.owners = options.owners || [];
@@ -1125,14 +1126,23 @@ var Bugsy = class {
       switch (ctx.data.type) {
         case "js":
         case "javascript":
+          if (!this.config.enabled.js) {
+            return;
+          }
           js(ctx, this);
           break;
         case "debug":
         case "test":
+          if (!this.config.enabled.debug) {
+            return;
+          }
           debug(ctx, this);
           break;
         case "error":
         case "err":
+          if (!this.config.enabled.error) {
+            return;
+          }
           err(ctx, this);
           break;
         default:

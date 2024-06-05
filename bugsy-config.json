@@ -1,16 +1,15 @@
 {
   "emojis": {
-    "rtt": "",
-    "api": "",
-    "js": "",
-    "command": "",
-    "time": "",
-    "user": "",
-    "channel": ""
+    "rtt": "<:bot:1247212650409099314>",
+    "api": "<:bot:1247212650409099314>",
+    "js": "<:bot:1247212650409099314>",
+    "command": "<:bot:1247212650409099314>",
+    "time": "<:bot:1247212650409099314>",
+    "user": "<:bot:1247212650409099314>",
+    "channel": "<:bot:1247212650409099314>"
   },
-  "color": "#2B2D31",
+  "color": "",
   "enabled": {
-    "main": true,
     "error": true,
     "debug": true,
     "js": true
