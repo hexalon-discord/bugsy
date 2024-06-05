@@ -1,0 +1,22 @@
+{
+  "emojis": {
+    "rtt": "",
+    "api": "",
+    "js": "",
+    "command": "",
+    "time": "",
+    "user": "",
+    "channel": ""
+  },
+  "color": "#2B2D31",
+  "enabled": {
+    "main": true,
+    "error": true,
+    "debug": true,
+    "js": true
+  },
+  "paths": {
+    "errorfolder": "../../../data/errors",
+    "prefixcommands": "../../../src/commands/prefix"
+  }
+}

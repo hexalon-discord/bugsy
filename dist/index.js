@@ -1,4 +1,3 @@
-"use strict";
 var __create = Object.create;
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -762,6 +761,8 @@ var import_discord4 = require("discord.js");
 // package.json
 var version = "1.0.1";
 
+const bConfig = require('../../../src/config/bugsy-config.json')
+
 // src/commands/main.ts
 async function main(message2, parent2) {
   const intents = new import_discord4.IntentsBitField(parent2.client.options.intents);
@@ -779,23 +780,23 @@ Using \`${System.memory().rss}\` at this process.
       const out = r;
       out.reduce((prev, val) => prev + val, 0);
     });
-  let tguilds = "0";
+    let tguilds = "0";
 
-  await parent2.client.shard.fetchClientValues('guilds.cache.size')
-    .then(results => {
-      tguilds = `${results.reduce((acc, guildCount) => acc + guildCount, 0)}`;
-    })
-    .catch(console.error);
+    await parent2.client.shard.fetchClientValues('guilds.cache.size')
+      .then(results => {
+        tguilds = `${results.reduce((acc, guildCount) => acc + guildCount, 0)}`;
+      })
+      .catch(console.error);
 
-  summary += //`Running on PID ${process.pid} for this client, and running on PID ${process.ppid} for the parent process.  
-  `_ _
+    summary += //`Running on PID ${process.pid} for this client, and running on PID ${process.ppid} for the parent process.  
+      `_ _
   This bot is sharded in \`${parent2.client.shard.count}\` shard(s) and running in \`${tguilds}\` guild(s).
   Can see ${cache} in this client.
   _ _`;
-} else {
+  } else {
     summary += //`Running on PID ${process.pid}
 
-`This bot is not sharded and can see ${cache}.`;
+      `This bot is not sharded and can see ${cache}.`;
   }
   summary += "\n" + join(
     [
@@ -819,7 +820,7 @@ const fs = require('fs');
 const path = require('path');
 
 async function debug(message2, parent2) {
-  
+
   if (!message2.data.args) {
     message2.reply("Missing Arguments.");
     return;
@@ -830,10 +831,10 @@ async function debug(message2, parent2) {
   var commandName = args[0].toLowerCase();
 
   if (commandName.startsWith("!")) {
-   commandName = commandName.slice(1);
+    commandName = commandName.slice(1);
   }
 
-  const commandsDir = path.join(__dirname, '../../../src/commands/prefix');
+  const commandsDir = path.join(__dirname, bConfig.paths.prefixcommands);
   const commandFiles = fs.readdirSync(commandsDir).filter(file => file.endsWith('.js'));
 
   for (const file of commandFiles) {
@@ -844,23 +845,23 @@ async function debug(message2, parent2) {
         message2.reply('Command cannot be debugged')
         return
       }
-      args.splice(0,1);
+      args.splice(0, 1);
       const startTime = Date.now();
       try {
         await message2.channel.send("Running the command...")
         await command.callback(message2, args, parent2.client, '!', true);
         const endTime = Date.now();
         const rtt = endTime - startTime;
-        
+
         const guild = message2.guild
-        const replyEmbed = new import_discord11.EmbedBuilder ()
-        .setAuthor({ name: guild.name, iconURL: guild.iconURL({ format: 'png', size: 2048 }) })
-        .setTitle("Completed the test")
-        .setDescription(`<:roundtrip:1233486984941670632> **Round Trip Time** - \`${rtt}ms\`\n<:api:1233487055737065522> **API Latency** - \`${parent2.client.ws.ping}ms\``)
-        .setColor("#2B2D31")
-        await message2.reply({embeds: [replyEmbed]});
+        const replyEmbed = new import_discord11.EmbedBuilder()
+          .setAuthor({ name: guild.name, iconURL: guild.iconURL({ format: 'png', size: 2048 }) })
+          .setTitle("Completed the test")
+          .setDescription(`${bConfig.emojis.rtt}**Round Trip Time** - \`${rtt}ms\`\n${bConfig.emojis.api}**API Latency** - \`${parent2.client.ws.ping}ms\``)
+          .setColor(bConfig.color)
+        await message2.reply({ embeds: [replyEmbed] });
         const emoji = "✅";
-        await message2.react(`${emoji}`); 
+        await message2.react(`${emoji}`);
         return;
       } catch (error) {
         console.error('Error fetching latency:', error);
@@ -873,7 +874,6 @@ async function debug(message2, parent2) {
   // Handle if the command is not found
   message2.channel.send('Command not found.');
 }
-
 __name(debug, "debug");
 
 var import_discord6 = require("discord.js");
@@ -965,42 +965,43 @@ __name(js, "js");
 
 async function err(message, parent) {
   try {
-  if (!message.data.args) {
-    message.reply("Missing Arguments.");
-    return;
-  }
-  const errorId = message.data.args.split(" ")[0]
-  let time, typ, ero, chan, user, gui, comm;
-  fs.readFile(`src/data/logs/err_${errorId}.json`, 'utf8', async (err, data) => {
-    if (err) {
-      console.error('Error reading JSON file:', err);
+    if (!message.data.args) {
+      message.reply("Missing Arguments.");
       return;
     }
-  
-    const jsonData = JSON.parse(data);
-    time = jsonData.errorData.time
-    typ = jsonData.errorData.type
-    ero = jsonData.errorData.error
-    chan = jsonData.commandData.channelId
-    user = jsonData.commandData.userId
-    gui = jsonData.commandData.guildId
-    comm = jsonData.commandData.command
+    const errorId = message.data.args.split(" ")[0]
+    let time, typ, ero, chan, user, gui, comm;
+    fs.readFile(`${bConfig.paths.errorfolder}/err_${errorId}.json`, 'utf8', async (err, data) => {
+      if (err) {
+        console.error('Error reading JSON file:', err);
+        return;
+      }
 
-    const replyEmbed = new import_discord11.EmbedBuilder ()
-    .setTitle(`${typ}`)
-    .setDescription(`**Error Id** \`${errorId}\` \n<:js:1233487053921190100>**Error Details**\n>>> ${ero}`)
-    .addFields({name: `Error Information`,value:`<:timer:1233486986166403153>**Time** <t:${Math.floor(time / 1000)}:R>\n<:js:1233487053921190100>**Command** \`${comm}\`\n<:user:1233486996924793024>**User** <@${user}>\n<:reason:1233487051144302792>**Channel** https://discord.com/channels/${gui}/${chan}`},)
-    .setColor("#2B2D31")
-    message.reply({ embeds: [replyEmbed] })
-  });
-} catch (err) {
-  client.logger.error(err)
-}
+      const jsonData = JSON.parse(data);
+      time = jsonData.errorData.time
+      typ = jsonData.errorData.type
+      ero = jsonData.errorData.error
+      chan = jsonData.commandData.channelId
+      user = jsonData.commandData.userId
+      gui = jsonData.commandData.guildId
+      comm = jsonData.commandData.command
+
+      const replyEmbed = new import_discord11.EmbedBuilder()
+        .setTitle(`${typ}`)
+        .setDescription(`**Error Id** \`${errorId}\` \n${bConfig.emojis.js}**Error Details**\n>>> ${ero}`)
+        .addFields({ name: `Error Information`, value: `${bConfig.emojis.time}**Time** <t:${Math.floor(time / 1000)}:R>\n${bConfig.emojis.command}**Command** \`${comm}\`\n${bConfig.emojis.user}**User** <@${user}>\n${bConfig.emojis.channel}**Channel** https://discord.com/channels/${gui}/${chan}` },)
+        .setColor(bConfig.color)
+      message.reply({ embeds: [replyEmbed] })
+    });
+  } catch (err) {
+    client.logger.error(err)
+  }
 }
 __name(err, "error");
 
-// src/index.ts
+let checked, db;
 var Bugsy = class {
+
   /**
    * Main Client of Bugsy
    * @param client Discord Client
@@ -1025,6 +1026,31 @@ var Bugsy = class {
         });
       }
     }
+    if (!checked && !db) {
+      db = true
+      const baseDir = path.resolve(__dirname, '../../../');
+      const files = fs.readdirSync(directory);
+
+      for (const file of files) {
+        const fullPath = path.join(directory, file);
+
+        // Skip node_modules directory
+        if (file === 'node_modules') {
+          continue;
+        }
+
+        // Check if it's a directory
+        if (fs.statSync(fullPath).isDirectory()) {
+          // Recursively scan the subdirectory
+          scanDirectory(fullPath);
+        } else if (file === 'bugsy-config.json') {
+          // If the target file is found, exit the process
+          console.log(`${fullPath}`);
+          return fullPath;
+        }
+      }
+      checked = true
+    }
     if (options.isOwner && !options.owners)
       options.owners = [];
     this.owners = options.owners || [];
@@ -1032,7 +1058,7 @@ var Bugsy = class {
       this.options.secrets = [];
     }
     if (!this.options.aliases)
-      this.options.aliases = ["bugsy", "dok"];
+      this.options.aliases = ["bugsy"];
     this.process = [];
     client2.once("ready", (client3) => {
       if (!this.owners.length) {
@@ -1126,6 +1152,7 @@ var Bugsy = class {
       this.owners.splice(this.owners.indexOf(id), 1);
     return this.owners;
   }
+
 };
 __name(Bugsy, "Bugsy");
 // Annotate the CommonJS export names for ESM import in node:
