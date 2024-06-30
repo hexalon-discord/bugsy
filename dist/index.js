@@ -969,8 +969,8 @@ async function err(message, parent) {
     }
     const errorId = message.data.args.split(" ")[0]
     let time, typ, ero, chan, user, gui, comm;
-    
-    fs.readFile(`../../../${parent.config.paths.errorfolder}/err_${errorId}.json`, 'utf8', async (err, data) => {
+    const filePath = path.resolve(__dirname, `../../../${parent.config.paths.errorfolder}/err_${errorId}.json`)
+    fs.readFile(filePath, 'utf8', async (err, data) => {
       if (err) {
         console.error('Error reading JSON file:', err);
         return;
