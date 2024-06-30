@@ -761,8 +761,6 @@ var import_discord4 = require("discord.js");
 // package.json
 var version = "1.0.1";
 
-const bConfig = require('../../../src/config/bugsy-config.json')
-
 // src/commands/main.ts
 async function main(message2, parent2) {
   const intents = new import_discord4.IntentsBitField(parent2.client.options.intents);
@@ -834,7 +832,7 @@ async function debug(message2, parent2) {
     commandName = commandName.slice(1);
   }
 
-  const commandsDir = path.join(__dirname, bConfig.paths.prefixcommands);
+  const commandsDir = path.join(__dirname, `../../../${bConfig.paths.prefixcommands}`);
   const commandFiles = fs.readdirSync(commandsDir).filter(file => file.endsWith('.js'));
 
   for (const file of commandFiles) {
@@ -971,7 +969,8 @@ async function err(message, parent) {
     }
     const errorId = message.data.args.split(" ")[0]
     let time, typ, ero, chan, user, gui, comm;
-    fs.readFile(`${parent.config.paths.errorfolder}/err_${errorId}.json`, 'utf8', async (err, data) => {
+    
+    fs.readFile(`../../../${parent.config.paths.errorfolder}/err_${errorId}.json`, 'utf8', async (err, data) => {
       if (err) {
         console.error('Error reading JSON file:', err);
         return;
@@ -1029,26 +1028,26 @@ var Bugsy = class {
       db = true
       const baseDir = path.resolve(__dirname, '../../../');
       function scanDirectory(direc) {
-      const files = fs.readdirSync(direc);
-      for (const file of files) {
-        const fullPath = path.join(direc, file);
-        if (file === 'node_modules') {
-          continue;
-        }
-        if (fs.statSync(fullPath).isDirectory()) {
-          const busgyconfig = scanDirectory(fullPath);
-          if (busgyconfig) {
-            return busgyconfig;
+        const files = fs.readdirSync(direc);
+        for (const file of files) {
+          const fullPath = path.join(direc, file);
+          if (file === 'node_modules') {
+            continue;
           }
-        } else if (file.toString() === 'bugsy-config.json') {
-          return fullPath;
+          if (fs.statSync(fullPath).isDirectory()) {
+            const busgyconfig = scanDirectory(fullPath);
+            if (busgyconfig) {
+              return busgyconfig;
+            }
+          } else if (file.toString() === 'bugsy-config.json') {
+            return fullPath;
+          }
         }
       }
-    }
       bcf = require(`${scanDirectory(baseDir)}`)
       if (!bcf.color) {
         bcf.color = "#2B2D31"
-      } 
+      }
       checked = true
     }
     this.config = bcf
